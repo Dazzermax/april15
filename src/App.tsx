@@ -1,20 +1,80 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
-import { Button } from './components/Button';
+import { Button, GreenButton } from './components/Button';
+
+import styled from 'styled-components';
+import { Flex } from './shared/Flex/Flex';
+
+const gap = '10px';
+const borderRadius = '6px';
+
+const Title = styled.h1`
+  font-size: 25px;
+  text-align: center;
+  font-style: italic;
+  color: red;
+`;
+
+const Wrapper = styled.div`
+  background: papayawhip;
+  border-radius: ${borderRadius};
+  padding: 1rem;
+  gap: ${gap};
+`;
+
+type Task = {
+  name: string;
+  id: number;
+};
+
+const generateId = () => Math.floor(Math.random() * 100000);
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [newTaskName, setNewTaskName] = useState<Task['name']>('');
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  useEffect(() => {
-    console.log(count);
-  }, [count]);
+  const handleResetNewTaskName = () => {
+    setNewTaskName('');
+  };
+
+  const handleAddTask = () => {
+    setTasks((prev) => [
+      ...prev,
+      {
+        id: generateId(),
+        name: newTaskName,
+      },
+    ]);
+    handleResetNewTaskName();
+  };
+
+  const handleDeleteTask = (id: Task['id']) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
 
   return (
-    <div>
-      <h1>Styled components</h1>
-      <Button onClick={() => setCount((p) => p + 1)} />
-      <div>{count}</div>
-    </div>
+    <Wrapper>
+      <Title>Todo</Title>
+      <input
+        type="text"
+        value={newTaskName}
+        onChange={(e) => setNewTaskName(e.target.value)}
+      />
+      <Button onClick={handleAddTask} disabled={!newTaskName}>
+        add
+      </Button>
+      <GreenButton>green</GreenButton>
+      <Flex $direction="column" $gap={10}>
+        {tasks.map((task) => {
+          return (
+            <Flex key={task.id} $direction="row" $gap={10}>
+              <span>{task.name}</span>
+              <button onClick={() => handleDeleteTask(task.id)}>🗑️</button>
+            </Flex>
+          );
+        })}
+      </Flex>
+    </Wrapper>
   );
 }
 
