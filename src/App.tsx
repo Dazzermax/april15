@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
-import { Button, GreenButton } from './components/Button';
+import { Button, GreenButton } from './shared/Button/Button';
 
 import styled from 'styled-components';
 import { Flex } from './shared/Flex/Flex';
@@ -52,9 +52,23 @@ function App() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
+  const jobListUrl = 'https://hacker-news.firebaseio.com/v0/jobstories.json';
+
+  useEffect(() => {
+    fetch(jobListUrl).then((d) => {
+      return d.json().then(console.log);
+    });
+    // .then((d) => console.log(d));
+  }, []);
+
   return (
     <Wrapper>
       <Title>Todo</Title>
+      <menu>
+        <Button as="a" $primary href="https://google.com">
+          tasks
+        </Button>
+      </menu>
       <input
         type="text"
         value={newTaskName}
